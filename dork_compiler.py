@@ -2,47 +2,67 @@ import os
 import re
 import urllib.parse
 
+# Function to print the banner with specified colors
 def print_banner():
-    os.system('toilet -f big --gay dorNKs')
+    RED = '\033[91m'
+    WHITE = '\033[97m'
+    RESET = '\033[0m'
+    
+    print(f"""{RED}
+     _            _   _ _  __    
+    | |          | \ | | |/ /    
+  {WHITE}__| | ___  _ __|  \| | ' / ___ 
+ / _` |/ _ \| '__| . ` |  < / __| 
+| (_| | (_) | |  | |\  | . \\__ \\ 
+ \__,_|\___/|_|  |_| \_|_|\_\___/ 
+{RESET}
+""")
 
+# Function to check the file size
 def check_file_size(file_path):
     file_size = os.path.getsize(file_path)
-    if file_size > 10 * 1024 * 1024:  # 10MB
+    if file_size > 10 * 1024 * 1024:  # 10MB limit
         print(f"Warning: The file {file_path} is larger than 10MB. This may slow down processing.")
 
+# Function to check if the domain is valid
 def is_valid_domain(domain):
     pattern = r"^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     return re.match(pattern, domain)
 
+# Function to append .com to companies without valid TLD
+def add_dot_com_if_needed(company):
+    if not re.search(r'\.[a-zA-Z]{2,}$', company):  # If no valid TLD is found
+        company += '.com'  # Add .com if it's not there
+    return company
+
+# Function to extract relevant parts of the dork
 def extract_relevant_info(dork):
-    # Extracts the relevant parts of the dork
     if "inurl" in dork:
-        return re.search(r'inurl:[^\s]+', dork).group(0)  # Gets the inurl part
+        return re.search(r'inurl:[^\s]+', dork).group(0)
     elif "filetype" in dork:
-        return re.search(r'filetype:[^\s]+', dork).group(0)  # Gets the filetype part
+        return re.search(r'filetype:[^\s]+', dork).group(0)
     elif "intitle" in dork:
-        return re.search(r'intitle:[^\s]+', dork).group(0)  # Gets the intitle part
+        return re.search(r'intitle:[^\s]+', dork).group(0)
     elif "intext" in dork:
-        return re.search(r'intext:[^\s]+', dork).group(0)  # Gets the intext part
+        return re.search(r'intext:[^\s]+', dork).group(0)
     else:
-        return dork.split(' ')[0]  # Fallback to the first part of the dork
+        return dork.split(' ')[0]
 
 def main():
-    print_banner()  # Print the banner when the program starts
+    print_banner()  # Print the banner
 
-    # Default file paths and search engine
+    # Default file paths
     companies_file = 'companies.txt'
     dorks_file = 'dorks.txt'
     output_file = 'result.txt'
     html_file = 'dorks.html'
-    search_engine = 'google'
 
     try:
         # Check file sizes
         check_file_size(companies_file)
         check_file_size(dorks_file)
 
-        # Check if company and dork files exist
+        # Ensure the company and dork files exist
         if not os.path.isfile(companies_file):
             print(f"Input file not found: {companies_file}. Please provide a valid file.")
             return
@@ -50,9 +70,9 @@ def main():
             print(f"Input file not found: {dorks_file}. Please provide a valid file.")
             return
 
-        # Read company names
+        # Read company names and append '.com' where needed
         with open(companies_file, 'r') as companies_file_handle:
-            companies = [company.strip() for company in companies_file_handle.readlines() if is_valid_domain(company.strip())]
+            companies = [add_dot_com_if_needed(company.strip()) for company in companies_file_handle.readlines() if company.strip()]
 
         # Read dorks
         with open(dorks_file, 'r') as dorks_file_handle:
@@ -64,19 +84,19 @@ def main():
             print("No dorks found. Using default dorks.")
             dorks = default_dorks
 
+        # Compile the dorks
         compiled_dorks = []
         for company in companies:
             for dork in dorks:
-                # Include the company name in the search query
                 compiled_dork = f"{dork} site:{company}"
                 compiled_dorks.append((company, compiled_dork))
 
-        # Write the output to result.txt
+        # Write compiled dorks to result.txt
         with open(output_file, 'w') as outfile:
             for company, compiled_dork in compiled_dorks:
                 outfile.write(compiled_dork + '\n')
 
-        # Create HTML file
+        # Create an HTML file
         with open(html_file, 'w') as html_file_handle:
             html_file_handle.write('<html><head><title>Dork Compilation Results</title>')
             html_file_handle.write('<style>')
@@ -87,7 +107,7 @@ def main():
             html_file_handle.write('</style></head><body>\n')
 
             for company in companies:
-                html_file_handle.write(f'<h2>{company}</h2>\n')  # Centered and capitalized company name heading
+                html_file_handle.write(f'<h2>{company}</h2>\n')
                 relevant_dorks = [dork for comp, dork in compiled_dorks if comp == company]
                 html_file_handle.write('<div>\n')
 
