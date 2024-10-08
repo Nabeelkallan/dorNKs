@@ -10,11 +10,11 @@ def print_banner():
     
     print(f"""{RED}
      _            _   _ _  __    
-    | |          | \ | | |/ /    
-  {WHITE}__| | ___  _ __|  \| | ' / ___ 
- / _ |/ _ \| '__| .  |  < / __| 
-| (_| | (_) | |  | |\  | . \\__ \\ 
- \__,_|\___/|_|  |_| \_|_|\_\___/ 
+    | |          | \\ | | |/ /    
+  {WHITE}__| | ___  _ __|  \\| | ' / ___ 
+ / _ |/ _ \\| '__| .  |  < / __| 
+| (_| | (_) | |  | |\\  | . \\__ \\ 
+ \\__,_|\\___/|_|  |_| \\_|_|\\_\\___/ 
 {RESET}
 """)
 
@@ -133,17 +133,14 @@ def main():
 
                 # Create buttons for each relevant dork (6 buttons per line)
                 for i, dork in enumerate(relevant_dorks):
-                    if i > 0 and i % 6 == 0:  # New line after every 6 buttons
+                    if i > 0 and i % 7 == 0:  # New line after every 7 buttons
                         html_file_handle.write('</div><div>\n')
                     encoded_dork = urllib.parse.quote_plus(dork)
                     search_url = f'https://www.google.com/search?q={encoded_dork}'
-                    button_text = truncate_text(extract_relevant_info(dork), max_length=15)  # Truncate text if too long
+                    button_text = truncate_text(dork, max_length=15)  # Truncate text if too long
                     html_file_handle.write(f'<a class="btn" href="{search_url}" target="_blank">{button_text}</a>\n')
 
                 html_file_handle.write('</div>\n')
-
-            # Line break before default dorks section
-            html_file_handle.write('<br>\n\n')
 
             # Output for default dorks
             html_file_handle.write('<h2 class="default-dorks">Default Dorks</h2>\n\n')
@@ -157,20 +154,19 @@ def main():
                 for i, dork in enumerate(default_dorks):
                     if i > 0 and i % 7 == 0:  # New line after every 7 buttons
                         html_file_handle.write('</div><div>\n')
-                    # Append the company to the default dork
-                    compiled_dork = f"{dork} site:{company}"
-                    encoded_dork = urllib.parse.quote_plus(compiled_dork)
-                    search_url = f'https://www.google.com/search?q={encoded_dork}'
-                    button_text = truncate_text(extract_relevant_info(dork), max_length=15)
+                    encoded_dork = urllib.parse.quote_plus(dork)
+                    search_url = f'https://www.google.com/search?q={encoded_dork} site:{company}'  # Add site filter for the company
+                    button_text = truncate_text(dork, max_length=15)  # Truncate text if too long
                     html_file_handle.write(f'<a class="btn" href="{search_url}" target="_blank">{button_text}</a>\n')
 
-                html_file_handle.write('</div>\n')  # End div for buttons
+                html_file_handle.write('</div>\n')
 
-            html_file_handle.write('</body></html>\n')
+            html_file_handle.write('</body></html>')
 
-        print(f"Dork compilation completed. Results saved to {output_file} and {html_file}.")
+        print("Dork compilation completed. Results saved to result.txt and dorks.html.")
+
     except Exception as e:
-        print(f"An error occurred: {str(e)}")
+        print(f"An error occurred: {e}")
 
 if __name__ == "__main__":
     main()
