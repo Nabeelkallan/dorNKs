@@ -148,7 +148,7 @@ def main():
             # Output for default dorks
             html_file_handle.write('<h2 class="default-dorks">Default Dorks</h2>\n\n')
 
-            # Iterate through companies and display their corresponding dorks
+            # Iterate through companies and display their corresponding default dorks
             for company in companies:
                 html_file_handle.write(f'<h3 class="company-name">{company}</h3>\n')  # Company name in the 2nd column (2/8 position)
                 html_file_handle.write('<div>\n')  # Start div for buttons
@@ -157,20 +157,20 @@ def main():
                 for i, dork in enumerate(default_dorks):
                     if i > 0 and i % 7 == 0:  # New line after every 7 buttons
                         html_file_handle.write('</div><div>\n')
-                    encoded_dork = urllib.parse.quote_plus(dork)
+                    # Append the company to the default dork
+                    compiled_dork = f"{dork} site:{company}"
+                    encoded_dork = urllib.parse.quote_plus(compiled_dork)
                     search_url = f'https://www.google.com/search?q={encoded_dork}'
-                    button_text = truncate_text(dork, max_length=15)  # Truncate text if too long
+                    button_text = truncate_text(extract_relevant_info(dork), max_length=15)
                     html_file_handle.write(f'<a class="btn" href="{search_url}" target="_blank">{button_text}</a>\n')
 
-                html_file_handle.write('</div>\n')  # Close div for buttons
+                html_file_handle.write('</div>\n')  # End div for buttons
 
-                # Add a line break before the next company
-                html_file_handle.write('<br>\n')
+            html_file_handle.write('</body></html>\n')
 
-            html_file_handle.write('</body></html>\n')  # Close body and HTML tags
-
+        print(f"Dork compilation completed. Results saved to {output_file} and {html_file}.")
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred: {str(e)}")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
