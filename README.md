@@ -1,4 +1,4 @@
-# dork_compiler
+# dorNKs (dork_compiler)
 
 Google Dork Compilation Tool
 A simple Python tool to generate Google dorks by combining company names with custom dorks.
