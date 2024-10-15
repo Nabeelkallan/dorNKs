@@ -18,12 +18,12 @@ A simple Python tool that generates Google dorks by combining company names with
 
 2. **Run the Script**  
 
-   Navigate to the folder where the script is located (cd dorNKs), 
-   and run:  python dornks.py
+   Navigate to the folder where the script is located ( cd dorNKs ),  and run:
+   python dornks.py
 
 
 
-3. **Output**  
+4. **Output**  
 
    After running the code, you will find an output file:
    - **dorks.html**: Open this file manually, Select and execute the dorks.
